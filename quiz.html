@@ -3,10 +3,41 @@
 	<head>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 		<style>
-
+			.main{
+				color: white;
+				text-align: center;
+			}
+			li{
+				list-style-type: none;
+				color: white;
+			}
+			.mainInput{
+				border: none;
+				background-color: #8080805e;
+				color: white;
+				padding: 5px;
+				border-radius: 5px;
+			}
 		</style>
 	</head>
-	<body>
+	<body style="background-color: purple;">
+		<h1 class="main">Quiz do Caio</h1>
+		<div>
+			O que escrever aqui?
+			<form id="form">
+				Nome: <input class="mainInput" type="text" name="name">
+				<input type="submit" value="Submit" onclick="countClicks()">
+			</form>
+		</div>
 
+		<script type="text/javascript">
+			var a = 0;
+			function countClicks(){
+				var nome = document.getElementById("form").elements[0].value;
+				a = a + 1;
+				console.log(a);
+				console.log(nome);
+			}
+		</script>
 	</body>
 </html>
