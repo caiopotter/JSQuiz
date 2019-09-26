@@ -20,24 +20,114 @@
 			}
 		</style>
 	</head>
+
 	<body style="background-color: purple;">
-		<h1 class="main">Quiz do Caio</h1>
-		<div>
-			O que escrever aqui?
-			<form id="form">
-				Nome: <input class="mainInput" type="text" name="name">
-				<input type="submit" value="Submit" onclick="countClicks()">
-			</form>
+		<div id="mainPage">
+			<h1 class="main">Quiz do Caio</h1>
+				Digite seu nome e clique em iniciar: <input id="userName" class="mainInput" type="text" name="name">
+			<button id="mainPageButton" onclick="nextPage()">Iniciar</button>
+		</div>
+		<div id="quiz">
+			
 		</div>
 
+		<button id="submit" style="display: none;"onclick="showResults()">Finalizar Quiz</button>
+
+		<div id="results"></div>
+
+
 		<script type="text/javascript">
-			var a = 0;
-			function countClicks(){
-				var nome = document.getElementById("form").elements[0].value;
-				a = a + 1;
-				console.log(a);
-				console.log(nome);
+			const quizContainer = document.getElementById('quiz');
+			const resultsContainer = document.getElementById('results');
+			const submitButton = document.getElementById('submit');
+			const mainPage = document.getElementById('mainPage');
+			const questions = [
+				{
+					question: "Questão 1",
+					answers: {
+						a: "Resposta 1",
+						b: "Resposta 2",
+						c: "Resposta 3"
+					},
+					correctAnswer: "a"
+				},
+				{	question: "Questão 2",
+					answers: {
+						a: "Resposta 1",
+						b: "Resposta 2",
+						c: "Resposta 3"
+					},
+					correctAnswer: "b"
+				},
+				{	question: "Questão 3",
+					answers: {
+						a: "Resposta 1",
+						b: "Resposta 2",
+						c: "Resposta 3"
+					},
+					correctAnswer: "c"
+				}
+			];
+
+			function nextPage(){
+				mainPage.style.display = "none";
+				buildQuiz();
+				submitButton.style.display = "block";
 			}
+
+			function buildQuiz(){
+				const output = [];
+
+				questions.forEach(
+					(currentQuestion, questionNumber) => {
+						const answers = [];
+
+						for(letter in currentQuestion.answers){
+							answers.push(
+								`<label>
+									<input type="radio" name="question${questionNumber}" value="${letter}">
+									${letter} : ${currentQuestion.answers[letter]}
+								</label>`);
+						}
+					output.push(
+					        `<div class="question"> ${currentQuestion.question} </div>
+					        <div class="answers"> ${answers.join('')} </div>`
+					      );
+
+					}
+
+
+					);
+				  quizContainer.innerHTML = output.join('');
+
+			}
+
+			function showResults(){
+				const answerContainers = quizContainer.querySelectorAll('.answers');
+				console.log(answerContainers);
+				let numCorrect = 0;
+
+				questions.forEach( (currentQuestion, questionNumber) => {
+					const answerContainer = answerContainers[questionNumber];
+					const selector = 'input[name=question'+questionNumber+']:checked';
+					const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+
+
+					if(userAnswer===currentQuestion.correctAnswer){
+						numCorrect++;
+						answerContainers[questionNumber].style.color = 'lightgreen';
+					}else{
+						answerContainers[questionNumber].style.color = 'red';
+					}
+
+				});
+
+				resultsContainer.innerHTML = numCorrect + ' out of ' + questions.length;
+
+			}
+
+			submitButton.addEventListener('click', showResults);
+
 		</script>
 	</body>
 </html>
