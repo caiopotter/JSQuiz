@@ -27,20 +27,26 @@
 				Digite seu nome e clique em iniciar: <input id="userName" class="mainInput" type="text" name="name">
 			<button id="mainPageButton" onclick="nextPage()">Iniciar</button>
 		</div>
-		<div id="quiz">
-			
+		<div class="quiz-container">
+			<div id="quiz"></div>
 		</div>
-
+		<button id="previous">Previous Question</button>
+		<button id="next">Next Question</button>
 		<button id="submit" style="display: none;"onclick="showResults()">Finalizar Quiz</button>
 
 		<div id="results"></div>
 
 
 		<script type="text/javascript">
+			//referência: https://www.sitepoint.com/simple-javascript-quiz/
 			const quizContainer = document.getElementById('quiz');
 			const resultsContainer = document.getElementById('results');
 			const submitButton = document.getElementById('submit');
 			const mainPage = document.getElementById('mainPage');
+			const previousButton = document.getElementById("previous");
+			const nextButton = document.getElementById("next");
+			const slides = document.querySelectorAll(".slide");
+			let currentSlide = 0;
 			const questions = [
 				{
 					question: "Questão 1",
@@ -90,8 +96,10 @@
 								</label>`);
 						}
 					output.push(
-					        `<div class="question"> ${currentQuestion.question} </div>
-					        <div class="answers"> ${answers.join('')} </div>`
+					        `<div class="slide">
+					        <div class="question"> ${currentQuestion.question} </div>
+					        <div class="answers"> ${answers.join('')} </div>
+					        </div>`
 					      );
 
 					}
