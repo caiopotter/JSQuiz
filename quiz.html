@@ -64,7 +64,9 @@
 			const previousButton = document.getElementById("previous");
 			const nextButton = document.getElementById("next");
 			let currentSlide = 0;
-
+			previousButton.style.display = "none";
+			nextButton.style.display = "none";
+			submitButton.style.display = "none";
 
 			const questions = [
 				{
@@ -97,7 +99,6 @@
 			function nextPage(){
 				mainPage.style.display = "none";
 				buildQuiz();
-				submitButton.style.display = "block";
 			}
 
 			function showSlide(n) {
@@ -176,15 +177,26 @@
 
 					if(userAnswer===currentQuestion.correctAnswer){
 						numCorrect++;
-						answerContainers[questionNumber].style.color = 'lightgreen';
+						highlightAnswer(answerContainer, currentQuestion, 'lightgreen');						
 					}else{
-						answerContainers[questionNumber].style.color = 'red';
+						highlightAnswer(answerContainer, currentQuestion, 'red');
 					}
 
 				});
 
 				resultsContainer.innerHTML = numCorrect + ' out of ' + questions.length;
 
+			}
+
+			function highlightAnswer(answerContainer, currentQuestion, color){
+				labels = answerContainer.getElementsByTagName('LABEL');
+						for(var i = 0; i < labels.length; i++){
+							input = labels[i].getElementsByTagName('INPUT');
+							if(input[0].value === currentQuestion.correctAnswer){
+								labels[i].style.color = color;
+							}
+
+						}
 			}
 
 			submitButton.addEventListener('click', showResults);
