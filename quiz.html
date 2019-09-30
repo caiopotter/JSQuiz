@@ -18,6 +18,24 @@
 				padding: 5px;
 				border-radius: 5px;
 			}
+			.slide{
+				position: absolute;
+				left: 0px;
+				top: 0px;
+				width: 100%;
+				z-index: 1;
+				opacity: 0;
+				transition: opacity 0.5s;
+			}
+			.active-slide{
+				opacity: 1;
+				z-index: 2;
+			}
+			.quiz-container{
+				position: relative;
+				height: 200px;
+				margin-top: 40px;
+			}
 		</style>
 	</head>
 
@@ -45,8 +63,9 @@
 			const mainPage = document.getElementById('mainPage');
 			const previousButton = document.getElementById("previous");
 			const nextButton = document.getElementById("next");
-			const slides = document.querySelectorAll(".slide");
 			let currentSlide = 0;
+
+
 			const questions = [
 				{
 					question: "Questão 1",
@@ -81,6 +100,39 @@
 				submitButton.style.display = "block";
 			}
 
+			function showSlide(n) {
+				const slides = document.querySelectorAll(".slide");
+
+				slides[currentSlide].classList.remove('active-slide');
+				slides[n].classList.add('active-slide');
+				currentSlide = n;
+				if(currentSlide===0){
+					previousButton.style.display = 'none';
+				}
+				else{
+					previousButton.style.display = 'inline-block';
+				}
+				if(currentSlide===slides.length-1){
+					nextButton.style.display = 'none';
+					submitButton.style.display = 'inline-block';
+				}
+				else{
+					nextButton.style.display = 'inline-block';
+					submitButton.style.display = 'none';
+				}
+			}
+
+			function showNextSlide() {
+				showSlide(currentSlide + 1);
+			}
+
+			function showPreviousSlide() {
+				showSlide(currentSlide - 1);
+			}
+
+			previousButton.addEventListener("click", showPreviousSlide);
+			nextButton.addEventListener("click", showNextSlide);
+
 			function buildQuiz(){
 				const output = [];
 
@@ -107,6 +159,7 @@
 
 					);
 				  quizContainer.innerHTML = output.join('');
+				  showSlide(0);
 
 			}
 
