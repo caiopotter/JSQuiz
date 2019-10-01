@@ -48,6 +48,7 @@
 		<div class="quiz-container">
 			<div id="quiz"></div>
 		</div>
+		<div id="countdown"></div>
 		<button id="previous">Previous Question</button>
 		<button id="next">Next Question</button>
 		<button id="submit" style="display: none;"onclick="showResults()">Finalizar Quiz</button>
@@ -96,9 +97,41 @@
 				}
 			];
 
+			function startWatch(){
+				var countDownDate = new Date(new Date().getTime() + 60 * 1000).getTime();
+
+
+					window.countdown = setInterval(function(){
+					var now = new Date().getTime();
+					var distance = countDownDate - now;
+
+					var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+					var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+					var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+					var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+					var miliseconds = Math.floor(distance % 1000);
+
+					document.getElementById("countdown").innerHTML = minutes + "m " + seconds + "s " + miliseconds + "ms ";
+
+					if (distance < 0) {
+						clearInterval(window.countdown);
+						count = document.getElementById("countdown");
+						count.innerHTML = "0m 0s 000ms";
+						count.style.color = "red";
+					}
+
+				}, 1);
+			}
+
+			function restartWatch(){
+				clearInterval(window.countdown);
+				startWatch();
+			}
+
 			function nextPage(){
 				mainPage.style.display = "none";
 				buildQuiz();
+				startWatch();
 			}
 
 			function showSlide(n) {
@@ -125,6 +158,7 @@
 
 			function showNextSlide() {
 				showSlide(currentSlide + 1);
+				restartWatch();
 			}
 
 			function showPreviousSlide() {
@@ -165,6 +199,7 @@
 			}
 
 			function showResults(){
+				clearInterval(window.countdown);
 				const answerContainers = quizContainer.querySelectorAll('.answers');
 				console.log(answerContainers);
 				let numCorrect = 0;
