@@ -25,7 +25,7 @@
 				width: 100%;
 				z-index: 1;
 				opacity: 0;
-				transition: opacity 0.5s;
+				transition: opacity 3.5s;
 			}
 			.active-slide{
 				opacity: 1;
@@ -49,9 +49,6 @@
 			<div id="quiz"></div>
 		</div>
 		<div id="countdown"></div>
-		<button id="previous">Previous Question</button>
-		<button id="next">Next Question</button>
-		<button id="submit" style="display: none;"onclick="showResults()">Finalizar Quiz</button>
 
 		<div id="results"></div>
 
@@ -60,14 +57,9 @@
 			//referência: https://www.sitepoint.com/simple-javascript-quiz/
 			const quizContainer = document.getElementById('quiz');
 			const resultsContainer = document.getElementById('results');
-			const submitButton = document.getElementById('submit');
 			const mainPage = document.getElementById('mainPage');
-			const previousButton = document.getElementById("previous");
-			const nextButton = document.getElementById("next");
 			let currentSlide = 0;
-			previousButton.style.display = "none";
-			nextButton.style.display = "none";
-			submitButton.style.display = "none";
+			var rightTargets = [];
 
 			const questions = [
 				{
@@ -140,19 +132,11 @@
 				slides[currentSlide].classList.remove('active-slide');
 				slides[n].classList.add('active-slide');
 				currentSlide = n;
-				if(currentSlide===0){
-					previousButton.style.display = 'none';
-				}
-				else{
-					previousButton.style.display = 'inline-block';
-				}
-				if(currentSlide===slides.length-1){
-					nextButton.style.display = 'none';
-					submitButton.style.display = 'inline-block';
-				}
-				else{
-					nextButton.style.display = 'inline-block';
-					submitButton.style.display = 'none';
+				if(slides.length == n+1){
+					finishQuiz();
+					clearInterval(window.countdown);
+					document.getElementById("countdown").style.display = "none";
+
 				}
 			}
 
@@ -165,9 +149,7 @@
 				showSlide(currentSlide - 1);
 			}
 
-			previousButton.addEventListener("click", showPreviousSlide);
-			nextButton.addEventListener("click", showNextSlide);
-
+		
 			function buildQuiz(){
 				const output = [];
 
@@ -178,8 +160,8 @@
 						for(letter in currentQuestion.answers){
 							answers.push(
 								`<label>
-									<input type="radio" name="question${questionNumber}" value="${letter}">
-									${letter} : ${currentQuestion.answers[letter]}
+									<input class="answerButton" type="button" name="question${questionNumber}" value="${letter} : ${currentQuestion.answers[letter]}">
+									
 								</label>`);
 						}
 					output.push(
@@ -190,36 +172,46 @@
 					      );
 
 					}
-
-
 					);
+
+
+					output.push(
+					        `<div class="slide">
+					        FIM
+					        </div>`
+					      );
+
 				  quizContainer.innerHTML = output.join('');
 				  showSlide(0);
+				  var buttons = quizContainer.querySelectorAll('.answerButton');
+				  for(i = 0; i < buttons.length; i++){
+				  	//buttons[i].addEventListener("click", showNextSlide);
+				  	buttons[i].addEventListener('click', function(e) {
+				    	e = e || window.event;
+				    	var target = e.target || e.srcElement,
+				        text = target.textContent || target.innerText;
+				        if(questions[target.name.substr(-1)].correctAnswer == target.value.substr(0,1)){
+				        	console.log("Acerto!!!");
+				        	target.style.backgroundColor = "lightgreen";
+				        	rightTargets.push(target);
+				        }
+				        else{
+				        	console.log("Erro!!!");
+				        	target.style.backgroundColor = "red";
+
+				        }
+				        showNextSlide();
+					}, false);
+				  }
 
 			}
 
-			function showResults(){
-				clearInterval(window.countdown);
-				const answerContainers = quizContainer.querySelectorAll('.answers');
-				console.log(answerContainers);
-				let numCorrect = 0;
-
-				questions.forEach( (currentQuestion, questionNumber) => {
-					const answerContainer = answerContainers[questionNumber];
-					const selector = 'input[name=question'+questionNumber+']:checked';
-					const userAnswer = (answerContainer.querySelector(selector) || {}).value;
-
-
-					if(userAnswer===currentQuestion.correctAnswer){
-						numCorrect++;
-						highlightAnswer(answerContainer, currentQuestion, 'lightgreen');						
-					}else{
-						highlightAnswer(answerContainer, currentQuestion, 'red');
-					}
-
-				});
-
-				resultsContainer.innerHTML = numCorrect + ' out of ' + questions.length;
+			function finishQuiz(){
+				resultsContainer.innerHTML = rightTargets.length + ' out of ' + questions.length;
+	        	var buttons = quizContainer.querySelectorAll('.answerButton');
+	        	for(i = 0; i < buttons.length; i++){
+	        		buttons[i].disabled = true;
+	        	}
 
 			}
 
@@ -234,7 +226,6 @@
 						}
 			}
 
-			submitButton.addEventListener('click', showResults);
 
 		</script>
 	</body>
